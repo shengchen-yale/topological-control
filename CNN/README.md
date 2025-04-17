@@ -66,6 +66,68 @@ model.add(Dense(1, activation='sigmoid'))
 
 > **Diagram:** Include a block diagram here (e.g., in `architecture.png`)
 
+### Self-Attention Layer Implementation
+
+Below is the Keras implementation of the `SelfAttention` layer used after the convolutional blocks. It implements the SAGAN-style self-attention mechanism to recalibrate feature maps by computing query, key, and value projections and applying learned attention weights.
+
+```python
+import tensorflow as tf
+
+class SelfAttention(tf.keras.layers.Layer):
+    def __init__(self):
+        super(SelfAttention, self).__init__()
+
+    def build(self, input_shape):
+        # Number of input channels
+        self.channels = input_shape[-1]
+        # 1×1 convolutions for query, key, and value
+        self.query_conv = tf.keras.layers.Conv2D(filters=self.channels // 8,
+                                                 kernel_size=1,
+                                                 name='query_conv')
+        self.key_conv = tf.keras.layers.Conv2D(filters=self.channels // 8,
+                                               kernel_size=1,
+                                               name='key_conv')
+        self.value_conv = tf.keras.layers.Conv2D(filters=self.channels,
+                                                 kernel_size=1,
+                                                 name='value_conv')
+        # Learnable scalar to balance attention output
+        self.gamma = self.add_weight(name='gamma',
+                                     shape=[1],
+                                     initializer='zeros',
+                                     trainable=True)
+
+    def call(self, inputs):
+        # Shape: (batch_size, height, width, channels)
+        batch_size, height, width, channels = tf.shape(inputs)[0], tf.shape(inputs)[1], tf.shape(inputs)[2], tf.shape(inputs)[3]
+
+        # Project inputs to query, key, and value tensors
+        query = self.query_conv(inputs)   # (B, H, W, C/8)
+        key = self.key_conv(inputs)       # (B, H, W, C/8)
+        value = self.value_conv(inputs)   # (B, H, W, C)
+
+        # Reshape for matrix multiplication
+        query = tf.reshape(query, [batch_size, -1, height * width])  # (B, C/8, H*W)
+        key = tf.reshape(key, [batch_size, -1, height * width])      # (B, C/8, H*W)
+
+        # Attention score: Q×Kᵀ -> (B, H*W, H*W)
+        attention = tf.matmul(query, key, transpose_b=True)
+        attention = tf.nn.softmax(attention, axis=-1)
+
+        # Reshape attention map back to spatial layout
+        attention = tf.reshape(attention, [batch_size, height * width, height, width])
+        attention = tf.transpose(attention, perm=[0, 2, 3, 1])        # (B, H, W, H*W)
+        attention = tf.expand_dims(attention, axis=-1)
+
+        # Weighted sum of values
+        attended_value = value * attention                           # broadcasting
+        attended_value = tf.reduce_sum(attended_value, axis=[2, 3])  # (B, H, W, C)
+        attended_value = tf.reshape(attended_value, [batch_size, height, width, channels])
+
+        # Combine with original inputs
+        outputs = self.gamma * attended_value + inputs
+        return outputs
+```
+
 ## Training and Evaluation
 
 - **Optimizer:** Adam (learning rate = 1e-4)
@@ -105,4 +167,5 @@ Scripts:
 
 ## Reference
 [1] Moriel, N., Ricci, M. and Nitzan, M., 2023. Let's do the time-warp-attend: Learning topological invariants of dynamical systems. arXiv preprint arXiv:2312.09234.
+
 [2] Zhang, H., Goodfellow, I., Metaxas, D. and Odena, A., 2019, May. Self-attention generative adversarial networks. In International conference on machine learning (pp. 7354-7363). PMLR.
