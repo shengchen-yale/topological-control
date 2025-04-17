@@ -64,7 +64,6 @@ model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid'))
 ```
 
-> **Diagram:** Include a block diagram here (e.g., in `architecture.png`)
 
 ### Self-Attention Layer Implementation
 
