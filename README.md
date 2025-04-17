@@ -9,15 +9,34 @@ This repository contains the code, simulation files, and models used in our subm
 - **COMSOL Multiphysics** 5.2a‑classkit simulation files  
 - **TensorFlow 2.15.1** CNN model in Jupyter notebooks  
 
-## Requirements
-
-### Software
+## Software
 - Python ≥ 3.10.9  
 - MATLAB (R) 2022a  
 - COMSOL Multiphysics 5.2a‑classkit  
 - TensorFlow 2.15.1  
 
-### Python Dependencies
-Install via pip:
-```bash
-pip install -r requirements.txt
+## Installation
+
+### 1. Install Python 3.10.9
+Download from https://www.python.org/downloads/
+The installation instruction is available in the same website.
+
+### 2. Install MATLAB R2022a
+Download from MathWorks (https://www.mathworks.com/downloads/)
+The installation instruction is available in the same website.
+
+### 3. Install COMSOL Multiphysics 5.2a-classkit
+Products of COMSOL Multiphysics are available from https://www.comsol.com/release-history
+
+### 4. Install TensorFlow 2.15.1 
+pip install tensorflow==2.15.1
+
+## License
+
+This software is licensed under the MIT License. Copyright (c) 2025 shengchen-yale. See LICENSE for the full license text.
+
+## Citation
+
+If you use this code, please cite our manuscript and code archive:
+Chen, S. et al. Topological control of spontaneous failure in active nematic solids.
+(DOI will be updated later)
