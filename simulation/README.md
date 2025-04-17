@@ -14,36 +14,36 @@ The model includes:
   
 #### Key Equations:
 1. **Q-tensor Construction**:
-    \[
+    $$
     Q(r,t) = \langle nn - \frac{I}{2} \rangle
-    \]
+    $$
     where \( n \) is the local filament orientation vector and \( I \) is the identity matrix.
     
 2. **Dynamics of Q**:
-    \[
+    $$
     \frac{\partial Q}{\partial t} + \nabla \cdot (vQ) = \frac{1}{\Gamma} \left( L_1 \nabla^2 Q + AϕQ + C(Q:Q)Q \right)
-    \]
+    $$
     where \( L_1 \) is the Frank elastic constant, \( \Gamma \) is the rotational viscosity, and \( A, C > 0 \) are energetic coefficients.
 
 3. **Stress Tensor (\( σ \))**:
-    \[
+    $$
     σ = σ^p + σ^a
-    \]
+    $$
     where \( σ^p \) is the passive stress and \( σ^a \) is the active stress.
 
     **Passive Stress (\( σ^p \))**:
-    \[
+    $$
     σ^p = 2G(ϕ, ε)ε + λ \, \text{tr}(ϵ)I + 2η \dot{ε}
-    \]
+    $$
     **Active Stress (\( σ^a \))**:
-    \[
+    $$
     σ^a = αϕ(Q + \frac{I}{2})
-    \]
+    $$
 
 4. **Network Breakage**:
-    \[
+    $$
     \frac{\partial ϕ}{\partial t} + \nabla \cdot (vϕ) = D_t \nabla^2 ϕ - kϕ \Theta \left( |\text{tr}(ϵ)| - ϵ^* \right)
-    \]
+    $$
     where \( D_t \) is the diffusion constant and \( k \) is the breakage rate.
 
 ### Finite Element Simulation
@@ -51,9 +51,9 @@ The coupled dynamical equations for \( Q \), \( ϕ \), and \( ϵ \) are solved u
 
 - **Generalized Maxwell Viscoelasticity** and **General Form PDE** modules.
 - **No-flux boundary conditions**:
-    \[
+    $$
     n_b \cdot \nabla Q = 0 \quad \text{and} \quad n_b \cdot \nabla ϕ = 0
-    \]
+    $$
 - **Symmetric boundary conditions** for the viscoelastic material.
 - **Initial conditions** from experimental measurements and normalized F-actin fluorescence.
 
