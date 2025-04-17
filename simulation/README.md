@@ -1,63 +1,84 @@
 # Active Solid Fracture Model Simulation Package
 
 ## Overview
-This repository contains the simulation package for the Active Solid Fracture Model, which is designed to study the frangible active solid as a biphasic mixture of a two-dimensional (2D) porous network of actomyosin submerged in a background fluid. This model captures the complex dynamics involving elastic deformations, active stresses, and evolving porosity caused by material breakage.
+This repository contains the simulation package for the **Active Solid Fracture Model**, which studies a biphasic mixture of a 2D porous actomyosin network submerged in a background fluid. The model captures elastic deformations, active stresses, and material fracture dynamics.
+
+---
 
 ## Model and Simulation Details
 
 ### Active Solid Fracture Model
 The model includes:
-- **Two-dimensional (2D) porous network of actomyosin (solid fraction: ϕ(r,t))** submerged in a background fluid.
-- **Linearized strain tensor** capturing small deformations of the network.
-- **Network velocity (v(r,t))** dominates all motion due to fluid being freely exchanged in the z-direction.
-- **Nematic microstructure** of the F-actin filament network described by a traceless second-rank tensor \( Q \).
-  
-#### Key Equations:
-1. **Q-tensor Construction**:
-    $$
-    Q(r,t) = \langle nn - \frac{I}{2} \rangle
-    $$
-    where \( n \) is the local filament orientation vector and \( I \) is the identity matrix.
-    
-2. **Dynamics of Q**:
-    $$
-    \frac{\partial Q}{\partial t} + \nabla \cdot (vQ) = \frac{1}{\Gamma} \left( L_1 \nabla^2 Q + AϕQ + C(Q:Q)Q \right)
-    $$
-    where \( L_1 \) is the Frank elastic constant, \( \Gamma \) is the rotational viscosity, and \( A, C > 0 \) are energetic coefficients.
+- **2D porous actomyosin network** (solid fraction: \(\phi(\mathbf{r}, t)\))
+- **Linearized strain tensor**:  
+  \[
+  \epsilon(\mathbf{r}, t) = \frac{1}{2} \left[ \nabla \mathbf{u} + (\nabla \mathbf{u})^\text{T} \right]
+  \]
+  where \(\mathbf{u}\) is the displacement field.
+- **Network velocity**: \(\mathbf{v}(\mathbf{r}, t) = \partial_t \mathbf{u}\)
+- **Nematic microstructure** described by the \(Q\)-tensor.
 
-3. **Stress Tensor (\( σ \))**:
-    $$
-    σ = σ^p + σ^a
-    $$
-    where \( σ^p \) is the passive stress and \( σ^a \) is the active stress.
+---
 
-    **Passive Stress (\( σ^p \))**:
-    $$
-    σ^p = 2G(ϕ, ε)ε + λ \, \text{tr}(ϵ)I + 2η \dot{ε}
-    $$
-    **Active Stress (\( σ^a \))**:
-    $$
-    σ^a = αϕ(Q + \frac{I}{2})
-    $$
+#### Key Equations
+1. **\(Q\)-Tensor Construction**:  
+   \[
+   Q(\mathbf{r}, t) = \left\langle \mathbf{n} \mathbf{n} - \frac{I}{2} \right\rangle
+   \]  
+   where \(\mathbf{n}\) is the local filament orientation vector.
 
-4. **Network Breakage**:
-    $$
-    \frac{\partial ϕ}{\partial t} + \nabla \cdot (vϕ) = D_t \nabla^2 ϕ - kϕ \Theta \left( |\text{tr}(ϵ)| - ϵ^* \right)
-    $$
-    where \( D_t \) is the diffusion constant and \( k \) is the breakage rate.
+2. **Dynamics of \(Q\)**:  
+   \[
+   \frac{\partial Q}{\partial t} + \nabla \cdot (\mathbf{v} Q) = \frac{1}{\Gamma} \left( L_1 \nabla^2 Q + A\phi Q + C(Q : Q)Q \right)
+   \]
+
+3. **Stress Tensor**:  
+   \[
+   \sigma = \sigma^p + \sigma^a
+   \]
+   - **Passive Stress** (\(\sigma^p\)):  
+     \[
+     \sigma^p = 2G(\phi, \epsilon)\epsilon + \lambda \, \text{tr}(\epsilon)I + 2\eta \dot{\epsilon}
+     \]
+   - **Active Stress** (\(\sigma^a\)):  
+     \[
+     \sigma^a = \alpha \phi \left( Q + \frac{I}{2} \right)
+     \]
+
+4. **Network Breakage**:  
+   \[
+   \frac{\partial \phi}{\partial t} + \nabla \cdot (\mathbf{v} \phi) = D_t \nabla^2 \phi - k\phi \, \Theta \left( |\text{tr}(\epsilon)| - \epsilon^* \right)
+   \]
+
+---
 
 ### Finite Element Simulation
-The coupled dynamical equations for \( Q \), \( ϕ \), and \( ϵ \) are solved using COMSOL Multiphysics software with:
+The equations are solved using **COMSOL Multiphysics** with:
+- **Modules**: Generalized Maxwell Viscoelasticity + General Form PDE
+- **Boundary Conditions**:  
+  \[
+  \mathbf{n}_b \cdot \nabla Q = 0, \quad \mathbf{n}_b \cdot \nabla \phi = 0
+  \]
+  (Symmetric BCs for displacements)
+- **Initial Conditions**:  
+  - \(Q\)-tensor from experimental data
+  - \(\phi\) normalized to F-actin fluorescence (\(0 \leq \phi(t=0) \leq 1\))
 
-- **Generalized Maxwell Viscoelasticity** and **General Form PDE** modules.
-- **No-flux boundary conditions**:
-    $$
-    n_b \cdot \nabla Q = 0 \quad \text{and} \quad n_b \cdot \nabla ϕ = 0
-    $$
-- **Symmetric boundary conditions** for the viscoelastic material.
-- **Initial conditions** from experimental measurements and normalized F-actin fluorescence.
+---
 
-### Parameters and Values
-- **Shear modulus parameters**: \( G_0 = 100 \) Pa, \( G_1 = 2000 \) Pa.
-- **Threshold values**: \( ϕ_0 = 0.65 \), \( ϕ_1 = 0.95 \), \( ℇ_0 = 1.05 \), \( ℇ_1 = 1.35 \).
-- **Other Parameters**: \( L_1 \), \( γ \), \( λ \), \( η \), \( α \), \( k \).
+### Parameters
+| Parameter | Symbol | Value | Unit |
+|-----------|--------|-------|------|
+| Base shear modulus | \(G_0\) | 100 | Pa |
+| Stiffened shear modulus | \(G_1\) | 2000 | Pa |
+| Porosity thresholds | \(\phi_0, \phi_1\) | 0.65, 0.95 | - |
+| Strain thresholds | \(\mathcal{E}_0, \mathcal{E}_1\) | 1.05, 1.35 | - |
+| Activity coefficient | \(\alpha\) | 1–10 | kPa |
+| Breakage rate | \(k\) | User-defined | s⁻¹ |
+
+---
+
+## Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/active-solid-fracture.git
