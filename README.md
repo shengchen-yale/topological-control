@@ -31,6 +31,9 @@ Products of COMSOL Multiphysics are available from https://www.comsol.com/releas
 ### 4. Install TensorFlow 2.15.1 
 pip install tensorflow==2.15.1
 
+## Clone the repository
+git clone https://github.com/shengchen-yale/topological-control.git
+
 ## License
 
 This software is licensed under the MIT License. Copyright (c) 2025 shengchen-yale. See LICENSE for the full license text.
