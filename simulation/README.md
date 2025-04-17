@@ -9,7 +9,7 @@ This repository contains the simulation package for the **Active Solid Fracture 
 
 ### Active Solid Fracture Model
 The model includes:
-- **2D porous actomyosin network** (solid fraction: \(\phi(\mathbf{r}, t)\))
+- **2D porous actomyosin network** (solid fraction: **\(\phi(\mathbf{r}, t)\)**)
 - **Linearized strain tensor**:  
   \[
   \epsilon(\mathbf{r}, t) = \frac{1}{2} \left[ \nabla \mathbf{u} + (\nabla \mathbf{u})^\text{T} \right]
