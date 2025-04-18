@@ -1,85 +1,127 @@
-# Active Solid Fracture Model Simulation Package
+# Active Solid Fracture Simulation
 
-## Overview
-This repository contains the simulation package for the **Active Solid Fracture Model**, which studies a biphasic mixture of a 2D porous actomyosin network submerged in a background fluid. The model captures elastic deformations, active stresses, and material fracture dynamics.
+This directory provides the COMSOL Multiphysics model and supporting files for simulating fracture in a 2D active nematic solid (F-actin–myosin network) as described in Section III of our manuscript.
 
----
+## Model Description
 
-## Model and Simulation Details
+We model the frangible active solid as a biphasic mixture of a 2D porous actomyosin network (solid fraction \(\phi(r,t)\)) immersed in fluid. Small network deformations are described by the linearized strain tensor:
 
-### Active Solid Fracture Model
-The model includes:
-Q(𝐫, t) = ⟨nn - I/2⟩
-- **2D porous actomyosin network** (solid fraction: (\phi(\mathbf{r}, t)))
-- **Linearized strain tensor**:  
-  \[
-  \epsilon(\mathbf{r}, t) = \frac{1}{2} \left[ \nabla \mathbf{u} + (\nabla \mathbf{u})^\text{T} \right]
-  \]
-  where \(\mathbf{u}\) is the displacement field.
-- **Network velocity**: \(\mathbf{v}(\mathbf{r}, t) = \partial_t \mathbf{u}\)
-- **Nematic microstructure** described by the \(Q\)-tensor.
+\[\epsilon(r,t) = \tfrac12 \bigl(\nabla u + (\nabla u)^T\bigr),\]
 
----
+where \(u(r,t)\) is the displacement field. Since fluid permeation in the z‑direction is free, the network velocity \(v(r,t)=\partial_t u\) governs in‑plane compressible dynamics (\(\nabla\cdot v \neq 0\)). Nematic microstructure is captured by a traceless tensor \(Q\), defined experimentally via
 
-#### Key Equations
-1. **\(Q\)-Tensor Construction**:  
-   \[
-   Q(\mathbf{r}, t) = \left\langle \mathbf{n} \mathbf{n} - \frac{I}{2} \right\rangle
-   \]  
-   where \(\mathbf{n}\) is the local filament orientation vector.
+\[Q(r,t) = \langle nn - \tfrac12 I\rangle,\]
 
-2. **Dynamics of \(Q\)**:  
-   \[
-   \frac{\partial Q}{\partial t} + \nabla \cdot (\mathbf{v} Q) = \frac{1}{\Gamma} \left( L_1 \nabla^2 Q + A\phi Q + C(Q : Q)Q \right)
-   \]
+with \(n\) the local filament orientation and the average taken over a 4.1 µm square domain.
 
-3. **Stress Tensor**:  
-   \[
-   \sigma = \sigma^p + \sigma^a
-   \]
-   - **Passive Stress** (\(\sigma^p\)):  
-     \[
-     \sigma^p = 2G(\phi, \epsilon)\epsilon + \lambda \, \text{tr}(\epsilon)I + 2\eta \dot{\epsilon}
-     \]
-   - **Active Stress** (\(\sigma^a\)):  
-     \[
-     \sigma^a = \alpha \phi \left( Q + \frac{I}{2} \right)
-     \]
+This framework couples: (1) oriented active stresses from myosin motors; (2) network elasticity and porosity evolution; and (3) fracture via loss of solid connectivity.
 
-4. **Network Breakage**:  
-   \[
-   \frac{\partial \phi}{\partial t} + \nabla \cdot (\mathbf{v} \phi) = D_t \nabla^2 \phi - k\phi \, \Theta \left( |\text{tr}(\epsilon)| - \epsilon^* \right)
-   \]
+## Governing Equations
 
----
+1. **Nematic order (\(Q\))**:
+   \[\partial_t Q + \nabla\cdot(vQ) = \tfrac1\Gamma \bigl(L_1\nabla^2Q + A\phi\,Q + C(Q:Q)Q\bigr)\]
+   - \(L_1\): Frank elastic constant
+   - \(\Gamma\): rotational viscosity
+   - \(A,C>0\): concentration‑dependent ordering coefficients
 
-### Finite Element Simulation
-The equations are solved using **COMSOL Multiphysics** with:
-- **Modules**: Generalized Maxwell Viscoelasticity + General Form PDE
-- **Boundary Conditions**:  
-  \[
-  \mathbf{n}_b \cdot \nabla Q = 0, \quad \mathbf{n}_b \cdot \nabla \phi = 0
-  \]
-  (Symmetric BCs for displacements)
-- **Initial Conditions**:  
-  - \(Q\)-tensor from experimental data
-  - \(\phi\) normalized to F-actin fluorescence (\(0 \leq \phi(t=0) \leq 1\))
+2. **Viscoelastic stress (\(\sigma^p\))** (Kelvin–Voigt):
+   \[\sigma^p = 2\,G(\phi,\epsilon)\,\epsilon + \lambda\,\mathrm{tr}(\epsilon)\,I + 2\,\eta\,\dot\epsilon\]
+   - \(G(\phi,\epsilon)\): shear modulus (see below)
+   - \(\lambda\): Lamé coefficient, \(\lambda = \tfrac{2G\nu}{(1+\nu)^2(1-2\nu)}\), with \(\nu=0.3\)
+   - \(\eta\): shear viscosity
 
----
+3. **Active stress (\(\sigma^a\))**:
+   \[\sigma^a = \alpha\phi\,(Q + \tfrac12 I)\]
+   - \(\alpha>0\): contractile activity coefficient
 
-### Parameters
-| Parameter | Symbol | Value | Unit |
-|-----------|--------|-------|------|
-| Base shear modulus | \(G_0\) | 100 | Pa |
-| Stiffened shear modulus | \(G_1\) | 2000 | Pa |
-| Porosity thresholds | \(\phi_0, \phi_1\) | 0.65, 0.95 | - |
-| Strain thresholds | \(\mathcal{E}_0, \mathcal{E}_1\) | 1.05, 1.35 | - |
-| Activity coefficient | \(\alpha\) | 1–10 | kPa |
-| Breakage rate | \(k\) | User-defined | s⁻¹ |
+4. **Force balance (overdamped)**:
+   \[\nabla\cdot(\sigma^p + \sigma^a) = \gamma\,v,\]
+   - \(\gamma\): substrate friction
 
----
+5. **Solid fraction evolution (\(\phi\))** with fracture:
+   \[\partial_t\phi + \nabla\cdot(v\phi) = D_t\nabla^2\phi - k\,\phi\,\Theta\bigl(|\mathrm{tr}(\epsilon)| - \epsilon^*\bigr)\]
+   - \(D_t\): small diffusion for numerical stability
+   - \(k\): breakage rate
+   - \(\epsilon^* = (\epsilon_0 + \epsilon_1)/2\): critical areal strain threshold
+   - \(\Theta(x) = \max(x,0)\)
 
-## Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/active-solid-fracture.git
+### Nonlinear Shear Modulus
+
+Shear modulus \(G\) depends on local \(\phi\) and areal strain \(\epsilon_{vol}=\mathrm{tr}(\epsilon)\):
+
+\[G_\text{conc} = \begin{cases}
+G_0 & \phi \le \phi_0, \\
+G_0 + (G_1 - G_0)\,\text{step}(\tfrac{\phi - \phi_0}{\phi_1 - \phi_0}) & \phi_0 < \phi < \phi_1, \\
+G_1 & \phi \ge \phi_1,
+\end{cases}\]
+
+\[G_\text{strain} = \begin{cases}
+G_1 & \epsilon_{vol} \le \epsilon_0, \\
+G_1 + (G_0 - G_1)\,\text{step}(\tfrac{\epsilon_{vol} - \epsilon_0}{\epsilon_1 - \epsilon_0}) & \epsilon_0 < \epsilon_{vol} < \epsilon_1, \\
+G_0 & \epsilon_{vol} \ge \epsilon_1,
+\end{cases}\]
+
+where:
+- \(\phi_0=0.65, \phi_1=0.95\)
+- \(\epsilon_0=1.05, \epsilon_1=1.35\)
+- \(G_0=100\,\mathrm{Pa}, G_1=2000\,\mathrm{Pa}\)
+- Final \(G = \min(G_\text{conc}, G_\text{strain})\).
+
+## Material Properties & Parameters
+
+| Parameter | Symbol      | Value/Range                   |
+|-----------|-------------|-------------------------------|
+| Frank constant      | \(L_1\)        | see manuscript               |
+| Rotational viscosity| \(\Gamma\)    | see manuscript               |
+| Ordering coeff.     | \(A,C\)        | see manuscript               |
+| Viscosity           | \(\eta\)      | see manuscript               |
+| Activity            | \(\alpha\)    | see manuscript               |
+| Friction            | \(\gamma\)    | see manuscript               |
+| Diffusion           | \(D_t\)        | small (e.g. 1e-6)            |
+| Breakage rate       | \(k\)          | see manuscript               |
+| Critical strain     | \(\epsilon^*\)| (\(\epsilon_0+\epsilon_1)/2\) |
+
+## Boundary Conditions
+
+- **No‑flux on \(Q,\phi\)**: \(n_b\cdot\nabla Q =0, \; n_b\cdot\nabla\phi=0\)
+- **Symmetry (zero normal stress)** on viscoelastic domain boundaries: \(n_b\cdot\sigma=0\)
+
+## Initial Conditions
+
+- **\(Q(r,0)\)**: interpolated from experimental data via Eq. (1).
+- **\(\phi(r,0)\)**: normalized F-actin fluorescence intensity, scaled 0–1.
+
+## Simulation Setup
+
+1. **Geometry & Mesh**
+   - Define 2D domain matching experimental FOV.
+   - Use physics-controlled mesh with refinement near expected fracture zones.
+2. **Physics Interfaces**
+   - Add **General Form PDE** interfaces for each independent component of \(Q\) and \(\phi\).
+   - Add **Viscoelasticity** (Generalized Maxwell) interface for displacement \(u\).
+3. **Parameters**
+   - Input all constants (\(L_1, \Gamma, A, C, \eta, \alpha, \gamma, D_t, k\)).
+   - Set strain thresholds and modulus definitions via piecewise functions.
+4. **Studies**
+   - Time‐dependent solver from \(t=0\) to desired \(t_{sim}\).
+   - Map simulation time to experimental time: \(t_{exp}=t_{sim}/k_{se}\), with \(k_{se}=\Gamma/(\alpha U)\), \(U=3C/(3A+C)\).
+5. **Solver Settings**
+   - Use fully coupled BDF; set tolerances for nonlinear convergence.
+
+## Running the Model
+
+Run COMSOL in batch mode:
+```bash
+comsol batch \
+  -inputfile comsol/active_solid_fracture.mph \
+  -outputfile results/active_solid_results.mph \
+  -study "std1"
+```
+To vary \(k_{se}\), add `-param k_se=value`.
+
+## Post‑Processing & Output
+
+- Export fields via **Export → Data Sets → Solution** as VTK or CSV.
+- Visualize strain, \(Q\) eigenvalues, and \(\phi\) maps within COMSOL or ParaView.
+- Use `scripts/postprocess.py` for automated extraction of fracture metrics.
+
