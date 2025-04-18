@@ -142,25 +142,27 @@ class SelfAttention(tf.keras.layers.Layer):
 
 Launch the Jupyter notebook for interactive analysis:
 ```bash
-jupyter notebook cnn_aster_prediction.ipynb
+jupyter notebook binary_class_v1.ipynb
 ```
 
 Scripts:
-- `train_cnn.py`: training script with command-line arguments
-- `evaluate_cnn.py`: computes accuracy, precision, recall on test set
+- `binary_class_v1.ipnb`: training script with the basic covolutional neural network
+- `binary_class_v2.ipnb`: training script with the addition of self-attention mechanism
 
 ## File Structure
 
 ```
-├── data/                   # orientation-field images and sliding-window outputs
-│   ├── processed/          # training, validation, test folders
-├── notebooks/              # Jupyter notebooks
-│   └── cnn_aster_prediction.ipynb
-├── scripts/                # Python scripts
-│   ├── train_cnn.py
-│   └── evaluate_cnn.py
-├── requirements.txt
-├── architecture.png        # network block diagram (add manually)
+├── training_validation_test_example/    # example of training, validation, test input images
+│   ├── train/          # training folder, with two subfolder contain two groups: aster or noaster
+│   ├── validation/     # validaiton folder, with two subfolder contain two groups: aster or noaster
+│   ├── test/           # test folder   
+├── Jupyter/              # Jupyter notebooks
+│   └── binary_class_v1.ipynb
+│   └── binary_class_v2.ipynb
+├── pre_analysis/                # Matlab scripts of using sliding window to generate input images from the experimental data
+│   ├── input_file_gen.m
+├── example/                # example images of the experimental data
+├── defect_example/         # example images of the topological defect in experiment
 └── README_DL.md            # this file
 ```
 
