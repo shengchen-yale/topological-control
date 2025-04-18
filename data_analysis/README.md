@@ -19,6 +19,7 @@ data_analysis/
 │
 └── README.md                        # This file
 
+
 # Features
 
 3D Streamlines: Reconstruct and visualize the 3D displacement field from experimental data.
@@ -34,10 +35,12 @@ Image Processing Toolbox (for PIV-related analysis)
 
 # Usage
 ## Clone or download the repository:
-git clone https://github.com/yourusername/data_analysis
+
+git clone https://github.com/shengchen-yale/topological-control.git
 cd data_analysis
 
 ## Open MATLAB and add the repository to your MATLAB path:
+
 addpath(genpath('path_to/data_analysis'));
 
 ## Run the main scripts depending on the type of analysis you want:
