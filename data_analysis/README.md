@@ -1,25 +1,20 @@
 # Repository Structure
 
-...
-data_analysis/
+```
+├── 3D_streamline/    # example of training, validation, test input images
+│   ├── showPIV_3D_streamline.m       # Visualizes 3D streamlines of the displacement field
+├── PIV_track/                        # A example of Particle Image Velocimetry (PIV) tracking data
 │
-├── 3D_streamline/
-│   └── showPIV_3D_streamline.m       # Visualizes 3D streamlines of the displacement field
-│
-├── PIV_track/                        # Placeholder for Particle Image Velocimetry (PIV) tracking data
-│
-├── colormap/
+├── colormap/              # Matlab scripts of using sliding window to generate input images from the experimental data
 │   ├── colorData.mat                 # Custom color data for visualizations
-│   └── othercolor.m                 # Script to modify or generate colormaps
-│
-├── curl/
-│   └── showPIV_curl.m               # Calculates and displays the curl of the displacement field
-│
-├── divergence/
-│   └── showPIV_deform.m             # Calculates and visualizes the divergence (deformation) field
-│
-└── README.md                        # This file
-...
+│   ├── othercolor.m                 # Script to modify or generate colormaps
+├── curl/                
+│   ├── showPIV_curl.m               # Calculates and displays the curl of the displacement field
+│ 
+├── divergence/        # example images of the topological defect in experiment
+│   ├── showPIV_deform.m             # Calculates and visualizes the divergence (deformation) field
+├── README.md                        # This file
+```
 
 
 # Features
