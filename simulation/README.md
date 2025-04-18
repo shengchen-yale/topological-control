@@ -104,7 +104,7 @@ where:
    - Set strain thresholds and modulus definitions via piecewise functions.
 4. **Studies**
    - Time‐dependent solver from \(t=0\) to desired \(t_{sim}\).
-   - Map simulation time to experimental time: \(t_{exp}=t_{sim}/k_{se}\), with \(k_{se}=\Gamma/(\alpha U)\), \(U=3C/(3A+C)\).
+   - Map simulation time to experimental time: \(t_{exp}=(t_{sim}-t_{0})/k_{se}\), with \(k_{se}=\Gamma/(\alpha U)\), \(U=3C/(3A+C)\). t_{0} is the time in simulation for the passive nematic structure to stabilize, after which, active stress is applied. 
 5. **Solver Settings**
    - Use fully coupled BDF; set tolerances for nonlinear convergence.
 
@@ -113,7 +113,7 @@ where:
 Run COMSOL in batch mode:
 ```bash
 comsol batch \
-  -inputfile comsol/active_solid_fracture.mph \
+  -inputfile comsol/active_solid_fracture_model_example.mph \
   -outputfile results/active_solid_results.mph \
   -study "std1"
 ```
@@ -121,7 +121,7 @@ To vary \(k_{se}\), add `-param k_se=value`.
 
 ## Post‑Processing & Output
 
-- Export fields via **Export → Data Sets → Solution** as VTK or CSV.
+- Export fields via **Export → Data Sets → Solution** as TXT.
 - Visualize strain, \(Q\) eigenvalues, and \(\phi\) maps within COMSOL or ParaView.
-- Use `scripts/postprocess.py` for automated extraction of fracture metrics.
+
 
