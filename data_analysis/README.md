@@ -23,8 +23,11 @@
 # Features
 
 3D Streamlines: Reconstruct and visualize the 3D displacement field from experimental data.
+
 Curl Computation: Analyze local rotational motion in the active nematic solid to highlight vortex-like structures.
+
 Divergence Calculation: Quantify local expansion or compression regions in the active material.
+
 Custom Colormaps: Enhance the clarity of visualization with tailored color schemes.
 
 # Getting Started
